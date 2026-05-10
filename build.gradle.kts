@@ -1,28 +1,40 @@
 plugins {
-	java
-	id("org.springframework.boot") version "4.0.6"
-	id("io.spring.dependency-management") version "1.1.7"
+    java
+    id("org.springframework.boot") version "4.0.6" apply false
+    id("io.spring.dependency-management") version "1.1.7" apply false
 }
 
-group = "com.debatezip"
-version = "0.0.1-SNAPSHOT"
+allprojects {
+    group = "com.debatezip"
+    version = "0.0.1-SNAPSHOT"
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
+    repositories {
+        mavenCentral()
+    }
 }
 
-repositories {
-	mavenCentral()
-}
+subprojects {
+    apply(plugin = "java")
+    apply(plugin = "io.spring.dependency-management")
 
-dependencies {
-	implementation("org.springframework.boot:spring-boot-starter")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
+    extensions.configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+    }
 
-tasks.withType<Test> {
-	useJUnitPlatform()
+    the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().apply {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:4.0.6")
+        }
+    }
+
+    dependencies {
+        "testImplementation"("org.springframework.boot:spring-boot-starter-test")
+        "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
