@@ -9,7 +9,10 @@ plugins {
 dependencies {
     implementation(project(":common"))
     implementation(project(":domain"))
-    implementation(project(":infra"))
+    // 어댑터 구현체들. 런타임에 Spring DI가 자동으로 도메인 포트 인터페이스에 주입한다.
+    // api 코드 자체는 com.debatezip.infra.* 클래스를 import 하지 않는다 (ArchUnit이 막는다).
+    implementation(project(":infra-persistence"))
+    implementation(project(":infra-stt"))
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     testImplementation("com.tngtech.archunit:archunit-junit5:1.4.2") // 의존성 규칙을 빌드에 강제하기 위한 ArchUnit
